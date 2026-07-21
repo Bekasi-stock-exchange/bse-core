@@ -1,0 +1,9 @@
+{
+  "name": "bse-core",
+  "private": true,
+  "workspaces": [
+    "app",
+    "server/services/*",
+    "server/packages/*"
+  ]
+}
