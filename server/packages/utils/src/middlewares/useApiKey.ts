@@ -1,6 +1,8 @@
 import { Elysia } from "elysia";
 
-export const apiKeyMiddleware = new Elysia({ name: "api-key-middleware" })
+import { ResponseHandler } from "../handlers/responseHandler";
+
+export const useApiKey = new Elysia({ name: "api-key-middleware" })
   .onBeforeHandle(({ request, set }) => {
     const apiKey = request.headers.get("x-api-key");
     const validApiKey = process.env.API_KEY;
@@ -11,6 +13,7 @@ export const apiKeyMiddleware = new Elysia({ name: "api-key-middleware" })
 
     if (!apiKey || apiKey !== validApiKey) {
       set.status = 401;
-      return { error: "Unauthorized" };
+      return ResponseHandler.error(401, "Unauthorized");
     }
-  });
+  })
+  .as("global");

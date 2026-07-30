@@ -42,6 +42,7 @@ export const userTokens = userPgSchema.table("user_tokens", {
     .references(() => users.id, { onDelete: "cascade" }),
   token: varchar("token", { length: 255 }).notNull().unique(),
   type: varchar("type", { length: 50 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

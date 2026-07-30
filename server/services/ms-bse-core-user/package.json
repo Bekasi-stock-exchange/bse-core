@@ -12,8 +12,10 @@
     "@bse/swagger": "workspace:*",
     "@bse/utils": "workspace:*",
     "@elysiajs/eden": "latest",
+    "@elysiajs/jwt": "^1.4.2",
     "drizzle-orm": "^0.45.2",
-    "elysia": "latest"
+    "elysia": "latest",
+    "jose": "^6.2.5"
   },
   "devDependencies": {
     "bun-types": "latest",
