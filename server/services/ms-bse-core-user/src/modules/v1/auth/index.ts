@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
-import { UserModel } from "../../../models/UserModel";
+import { RegisterService } from "./services/register.service";
 import { ResponseHandler } from "@bse/utils";
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
   .post("/register", async ({ body, set }) => {
     try {
-      const user = await UserModel.registerUser(body);
+      const user = await RegisterService.register(body);
       set.status = 201;
       return ResponseHandler.success(user, 201);
     } catch (error: any) {

@@ -4,9 +4,9 @@ import { apiKeyMiddleware, errorHandler } from "@bse/utils";
 import { v1Routes } from "./v1";
 
 const app = new Elysia()
-  .use(errorHandler)
   .use(docs)
   .use(apiKeyMiddleware)
+  .use(errorHandler)
   .use(v1Routes);
 
 export default app;
