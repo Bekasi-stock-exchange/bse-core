@@ -1,0 +1,10 @@
+import { logger } from "@bse/utils";
+import app from "./modules";
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  logger.info(
+    `🦊 ${process.env.APP_NAME || "App"} is running at http://${app.server?.hostname}:${app.server?.port}`,
+  );
+});

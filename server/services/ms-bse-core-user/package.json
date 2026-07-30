@@ -8,13 +8,15 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest",
-    "@elysiajs/eden": "latest",
     "@bse/database": "workspace:*",
-    "@bse/utils": "workspace:*"
+    "@bse/swagger": "workspace:*",
+    "@bse/utils": "workspace:*",
+    "@elysiajs/eden": "latest",
+    "drizzle-orm": "^0.45.2",
+    "elysia": "latest"
   },
   "devDependencies": {
     "bun-types": "latest",
-    "typescript": "^5.0.0"
+    "typescript": "^7.0.2"
   }
 }

@@ -8,6 +8,13 @@
       "when": 1784604758761,
       "tag": "0000_real_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785390041593,
+      "tag": "0001_chunky_black_queen",
+      "breakpoints": true
     }
   ]
 }
