@@ -7,7 +7,6 @@ const app = new Elysia()
   .use(errorHandler)
   .use(docs)
   .use(apiKeyMiddleware)
-  .use(v1Routes)
-  .get("/", () => "Hello from ms-user");
+  .use(v1Routes);
 
 export default app;
