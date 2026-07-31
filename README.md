@@ -5,21 +5,22 @@ This repository (`bse-core`) is a monorepo containing the frontend application, 
 ## 🏗 Architecture
 
 ### Frontend (`/app`)
-A Single Page Application (SPA) built with:
-- **React**
-- **Vite**
-- **TanStack Router** (File-based routing)
-- **TanStack Query** (Data fetching and state management)
+A web application built with **Next.js 16** (App Router):
+- **React 19**
+- **Tailwind CSS v4**
+- **Zustand 5** (state management)
+- **Eden Treaty** (type-safe API client to the Elysia backend)
 
 ### Backend Services (`/server/services`)
 High-performance backend microservices built with **Elysia** (on Bun) and **Eden** for end-to-end type safety:
-- **`ms-bse-core-transaction`**: Microservice handling trading and transactions.
-- **`ms-bse-core-user`**: Microservice handling user accounts and authentication.
+- **`ms-bse-core-user`** (`@bse/ms-user`): User accounts and authentication (register/login/refresh/logout).
+- **`ms-bse-core-transaction`** (`@bse/ms-transaction`): Trading and transactions (scaffolded).
 
 ### Shared Packages (`/server/packages`)
 Internal libraries shared across the microservices:
-- **`@bse/database`**: Shared database schema, connection logic, and queries.
-- **`@bse/utils`**: Common utility functions.
+- **`@bse/database`**: Drizzle ORM schema, connection logic, and database scripts.
+- **`@bse/utils`**: Shared middleware (`useApiKey`, `useAuth`), error/response handlers, logger, and encryption helpers.
+- **`@bse/swagger`**: Conditional Swagger documentation plugin.
 
 ## 🚀 Getting Started
 
@@ -34,16 +35,16 @@ bun install
 ```
 
 ### Running the Project
-Since this is a monorepo, you can run services individually from their respective directories:
+Run each workspace from the root using the convenience scripts, or `cd` into a workspace and run `bun run dev`:
 
 ```bash
-# To run the user microservice
-cd server/services/ms-bse-core-user
-bun run dev
+# From the repo root
+bun run dev:app            # frontend (Next.js dev)
+bun run dev:user           # user microservice
+bun run dev:transaction    # transaction microservice
 
-# To run the frontend app
-cd app
-bun run dev
+# Build, lint, and typecheck across workspaces
+bun run build
+bun run lint
+bun run typecheck
 ```
-
-*(Note: Root-level scripts can be added to `package.json` later to run everything concurrently if needed).*

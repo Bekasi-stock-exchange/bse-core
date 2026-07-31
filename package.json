@@ -5,5 +5,18 @@
     "app",
     "server/services/*",
     "server/packages/*"
-  ]
+  ],
+  "scripts": {
+    "dev:app": "bun run --cwd app dev",
+    "dev:user": "bun run --cwd server/services/ms-bse-core-user dev",
+    "dev:transaction": "bun run --cwd server/services/ms-bse-core-transaction dev",
+    "build": "bun run --cwd app build && bun run --cwd server/services/ms-bse-core-user build",
+    "lint": "bun run --cwd app lint && bun run --cwd server/services/ms-bse-core-user lint && bun run --cwd server/packages/database lint && bun run --cwd server/packages/utils lint && bun run --cwd server/packages/swagger lint",
+    "typecheck": "bun run --cwd app typecheck && bun run --cwd server/services/ms-bse-core-user typecheck && bun run --cwd server/packages/database typecheck && bun run --cwd server/packages/utils typecheck && bun run --cwd server/packages/swagger typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
 }

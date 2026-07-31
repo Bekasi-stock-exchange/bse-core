@@ -5,12 +5,16 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint --config ../../eslint.config.mjs src"
+  },
   "dependencies": {
     "elysia": "latest",
     "@elysiajs/swagger": "latest"
   },
   "devDependencies": {
     "bun-types": "latest",
-    "typescript": "^7.0.2"
+    "typescript": "^5"
   }
 }

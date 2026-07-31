@@ -6,6 +6,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint --config ../../eslint.config.mjs src",
     "db:create": "bun run ./scripts/create-db.ts",
     "db:reset": "bun run ./scripts/reset-db.ts && bun run db:push",
     "db:generate": "drizzle-kit generate",
@@ -17,7 +19,7 @@
     "@types/pg": "^8.20.0",
     "bun-types": "latest",
     "drizzle-kit": "^0.31.10",
-    "typescript": "^7.0.2"
+    "typescript": "^5"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
