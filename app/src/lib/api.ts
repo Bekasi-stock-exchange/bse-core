@@ -13,6 +13,55 @@ const MS_USER_API_KEY =
 
 import { useAuthStore } from "@store/useAuthStore";
 
+// Single-flight refresh: concurrent 401s share one /auth/refresh call.
+// Refresh tokens are single-use (server rotates them), so without a mutex,
+// parallel retries would each fire a refresh and the later ones would hit the
+// now-invalidated cookie and log the user out spuriously.
+let refreshPromise: Promise<string | null> | null = null;
+
+async function doRefresh(): Promise<string | null> {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const refreshResponse = await fetch(`${MS_USER_URL}/api/v1/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "x-api-key": MS_USER_API_KEY,
+          "Content-Type": "application/json",
+        },
+        // Send the httpOnly refresh token cookie
+        credentials: "include",
+      });
+
+      if (!refreshResponse.ok) {
+        // Refresh rejected (token expired/invalid/reuse detected) or server error
+        useAuthStore.getState().logout();
+        return null;
+      }
+
+      const refreshData = await refreshResponse.json();
+      const newAccessToken = refreshData?.data?.accessToken;
+      if (!newAccessToken) {
+        useAuthStore.getState().logout();
+        return null;
+      }
+      useAuthStore.getState().setAccessToken(newAccessToken);
+      return newAccessToken as string;
+    } catch {
+      // Network error / server down
+      useAuthStore.getState().logout();
+      return null;
+    }
+  })();
+
+  try {
+    return await refreshPromise;
+  } finally {
+    refreshPromise = null;
+  }
+}
+
 // Create the Eden Treaty client for the User service with type safety
 export const userApi = edenTreaty<UserApp>(MS_USER_URL, {
   fetcher: (async (resource, init) => {
@@ -37,37 +86,19 @@ export const userApi = edenTreaty<UserApp>(MS_USER_URL, {
 
     // Handle auto refresh on 401 Unauthorized
     if (response.status === 401 && !isRefreshRoute && !isLoginRoute) {
-      try {
-        // Attempt to refresh the token using native fetch to avoid interceptor loop
-        const refreshResponse = await fetch(`${MS_USER_URL}/api/v1/auth/refresh`, {
-          method: "POST",
-          headers: {
-            "x-api-key": MS_USER_API_KEY,
-            "Content-Type": "application/json",
-          },
-          // Ensure cookies are sent (important for refresh token)
-          credentials: "include",
-        });
+      const newToken = await doRefresh();
+      if (newToken) {
+        // Retry original request with the new access token
+        response = await fetch(resource, { ...init, headers: getHeaders(newToken) });
 
-        if (refreshResponse.ok) {
-          const refreshData = await refreshResponse.json();
-          if (refreshData?.data?.accessToken) {
-            const newAccessToken = refreshData.data.accessToken;
-            // Update auth store
-            useAuthStore.getState().setAccessToken(newAccessToken);
-
-            // Retry original request with new token
-            response = await fetch(resource, { ...init, headers: getHeaders(newAccessToken) });
-          } else {
-            useAuthStore.getState().logout();
-          }
-        } else {
-          // Refresh failed (e.g. token expired/invalid)
+        // Recheck: if the retry is STILL 401, the new token was rejected
+        // (server restarted / token invalidated / misconfigured auth) — log out
+        // rather than retrying in a loop.
+        if (response.status === 401) {
           useAuthStore.getState().logout();
         }
-      } catch {
-        useAuthStore.getState().logout();
       }
+      // If newToken is null, doRefresh already logged the user out.
     }
 
     return response;
