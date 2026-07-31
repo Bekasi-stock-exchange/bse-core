@@ -20,6 +20,19 @@ export const schema = {
 
 export const db = drizzle(pool, { schema });
 
+/**
+ * Verify database connectivity by issuing a trivial query against the pool.
+ * Returns true if the database is reachable, false otherwise (does not throw).
+ */
+export async function checkDatabase(): Promise<boolean> {
+  try {
+    const result = await pool.query("SELECT 1");
+    return result.rowCount === 1;
+  } catch {
+    return false;
+  }
+}
+
 // Export everything from schemas so other packages can use the tables/types
 export * from "./schema/userSchema";
 export * from "./schema/transactionSchema";
