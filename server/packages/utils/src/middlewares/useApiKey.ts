@@ -4,6 +4,8 @@ import { ResponseHandler } from "../handlers/responseHandler";
 
 export const useApiKey = new Elysia({ name: "api-key-middleware" })
   .onBeforeHandle(({ request, set }) => {
+    if (request.method === "OPTIONS") return;
+
     const apiKey = request.headers.get("x-api-key");
     const validApiKey = process.env.API_KEY;
 

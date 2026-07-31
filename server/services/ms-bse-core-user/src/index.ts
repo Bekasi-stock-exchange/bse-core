@@ -8,6 +8,7 @@
 
 import { logger } from "@bse/utils";
 import app from "./modules";
+export type { App } from "./modules";
 
 const PORT = process.env.PORT || 3000;
 

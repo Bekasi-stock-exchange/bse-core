@@ -10,14 +10,17 @@
  */
 
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { docs } from "@bse/swagger";
 import { useApiKey, errorHandler } from "@bse/utils";
 import { v1Routes } from "./v1";
 
 const app = new Elysia()
+  .use(cors())
   .use(docs)
   .use(useApiKey)
   .use(errorHandler)
   .use(v1Routes);
 
+export type App = typeof app;
 export default app;
